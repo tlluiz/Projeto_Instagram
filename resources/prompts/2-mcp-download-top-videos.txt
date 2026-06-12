@@ -1,0 +1,65 @@
+Create an MCP in Node.js (JavaScript) that reads the CSV file previously
+generated with the list of videos of one Instagram account, and downloads the
+most-liked videos.
+
+Input
+- The MCP receives the path to the CSV file. Accept it flexibly, without
+  assuming a fixed folder structure — the caller may pass any absolute or
+  relative path.
+- Derive the account from the CSV path: the account name is the name of the
+  folder that contains the CSV (e.g. for resources/videos/<account>/list.csv,
+  the account is <account>).
+- The MCP also receives the number of videos to download (a positive integer).
+  If that number is greater than the videos available in the CSV, download as
+  many as exist.
+
+Ordering
+- After reading the CSV, order the videos by the number of likes (the `likes`
+  column), from most liked to least liked. Ignore the view count for ordering.
+- Treat a missing/empty `likes` value as 0.
+
+Selecting and identifying videos
+- Using that ordering, download the requested number of videos, always starting
+  from the most liked.
+- Each video is identified by the `shortcode` column of the CSV (note: this is
+  the `shortcode` column, NOT the `id` column).
+- Important: the URL of the video file (.mp4) is NOT taken from the CSV. The CSV
+  may contain a `video_url` column, but those URLs expire — always resolve the
+  .mp4 URL fresh, online, from the shortcode (see below).
+
+Resolving and downloading (public strategy, no authentication)
+- Use the public, no-authentication strategy: no login, no cookies, no tokens.
+  Do not use endpoints that redirect to a "login wall".
+- The working strategy is Instagram's public (web) GraphQL endpoint, queried by
+  shortcode, extracting the `video_url` field from the `xdt_shortcode_media`
+  node. Specifically:
+    - Make a GET request to https://www.instagram.com/graphql/query passing
+      doc_id=10015901848480474 and variables={"shortcode":"<shortcode>"}
+      (URL-encoded).
+    - Send browser-like headers, including x-ig-app-id: 936619743392459 and a
+      browser User-Agent.
+    - Read data.xdt_shortcode_media.video_url and download the file from that
+      URL.
+- Error tolerance: if anything goes wrong while resolving or downloading any
+  individual video, ignore that video and move on, downloading at least the
+  videos that succeed.
+
+Output (file naming and storage)
+- Name each downloaded file as the order number, an underscore, and the
+  shortcode, with the .mp4 extension — the most liked is 1, the next is 2, and
+  so on (e.g. 1_<shortcode>.mp4).
+- Store the downloaded videos in a `downloads` subfolder inside the account
+  folder derived from the CSV path (e.g.
+  resources/videos/<account>/downloads/), creating it if needed.
+- On a re-run, skip any video whose target file already exists, so already
+  downloaded videos are not fetched again.
+
+Project setup
+- Save the MCP in the path resources/mcps/instagram-top-videos-download and
+  register it in the MCP configuration file at the root of the project
+  (.mcp.json).
+- After building the MCP, install all Node.js dependencies (run npm install in
+  the MCP folder) so it is ready to use.
+
+Do not run or test the functionality — just develop the MCP; I will run the
+tests myself.
