@@ -7,6 +7,10 @@
     "instagram-top-videos-download": {
       "command": "node",
       "args": ["resources/mcps/instagram-top-videos-download/src/index.js"]
+    },
+    "video-transcription": {
+      "command": "node",
+      "args": ["resources/mcps/video-transcription/src/index.js"]
     }
   }
 }

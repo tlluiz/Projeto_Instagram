@@ -1,6 +1,6 @@
 # Projeto_Instagram
 
-A small project built around two **MCP servers** that work with the public
+A small project built around three **MCP servers** that work with the public
 videos of an Instagram account — **without authentication** (no login, cookies
 or tokens). Together they form a simple pipeline:
 
@@ -8,6 +8,8 @@ or tokens). Together they form a simple pipeline:
    + view and like counts) and saves them to a CSV.
 2. **`instagram-top-videos-download`** — reads that CSV, ranks the videos by
    likes and downloads the most-liked ones as `.mp4` files.
+3. **`video-transcription`** — transcribes the downloaded videos to text with
+   the OpenAI API, saving a clean `.txt` next to each video.
 
 ## What's here
 
@@ -15,10 +17,11 @@ or tokens). Together they form a simple pipeline:
 |---|---|
 | `resources/mcps/instagram-videos/` | MCP that collects an account's videos into a CSV. See its [README](resources/mcps/instagram-videos/README.md). |
 | `resources/mcps/instagram-top-videos-download/` | MCP that downloads the top-liked videos from that CSV. See its [README](resources/mcps/instagram-top-videos-download/README.md). |
+| `resources/mcps/video-transcription/` | MCP that transcribes the downloaded videos to text via the OpenAI API. See its [README](resources/mcps/video-transcription/README.md). |
 | `resources/prompts/` | The task prompts that defined each MCP. |
 | `resources/docs/` | Excalidraw diagrams (overview / MCP flow). |
 | `resources/videos/<account>/list.csv` | Per-account video list produced by the first MCP (git-ignored). |
-| `resources/videos/<account>/downloads/` | Downloaded `.mp4` files produced by the second MCP (git-ignored). |
+| `resources/videos/<account>/downloads/` | Downloaded `.mp4` files (and their `.txt` transcriptions) produced by the second and third MCPs (git-ignored). |
 
 ## 1. The `instagram-videos` MCP
 
@@ -72,10 +75,43 @@ node src/index.js <csvPath> <count>
 See its [README](resources/mcps/instagram-top-videos-download/README.md) for
 parameters, environment variables and limitations.
 
+## 3. The `video-transcription` MCP
+
+Exposes two tools, **`transcribe_video`** (one file) and **`transcribe_folder`**
+(every video in a folder), which:
+
+- extract and compress each video's audio to mono/16 kHz/low-bitrate Opus using
+  a **bundled ffmpeg** (`ffmpeg-static` — nothing to install, cross-OS), so only
+  the audio is uploaded, never the heavy video;
+- transcribe it with the **OpenAI API** (key read from a `.env` at the project
+  root; fails with a clear message if it is missing);
+- work around the OpenAI size cap (~25 MB) by **splitting large audio into
+  chunks** and stitching the pieces back into one transcription;
+- save the clean text as `<video-basename>.txt` next to the video, **skip**
+  videos that already have a `.txt` (unless `force` is set), and **ignore**
+  per-video errors so the rest still get transcribed.
+
+### Quick start
+
+```bash
+cd resources/mcps/video-transcription
+npm install
+
+# create a .env at the project root with your key (see .env.example)
+#   OPENAI_API_KEY=sk-...
+
+# CLI mode (manual testing) — single video or whole folder
+node src/index.js <videoFileOrFolder> [--force]
+# e.g. node src/index.js resources/videos/thiagomilk_/downloads --force
+```
+
+See its [README](resources/mcps/video-transcription/README.md) for parameters,
+environment variables and limitations.
+
 ## Registering the MCP servers
 
-Both servers are registered in the project's [`.mcp.json`](.mcp.json). To use
-them in your own MCP client (e.g. Claude Desktop / Claude Code):
+All three servers are registered in the project's [`.mcp.json`](.mcp.json). To
+use them in your own MCP client (e.g. Claude Desktop / Claude Code):
 
 ```json
 {
@@ -87,6 +123,10 @@ them in your own MCP client (e.g. Claude Desktop / Claude Code):
     "instagram-top-videos-download": {
       "command": "node",
       "args": ["resources/mcps/instagram-top-videos-download/src/index.js"]
+    },
+    "video-transcription": {
+      "command": "node",
+      "args": ["resources/mcps/video-transcription/src/index.js"]
     }
   }
 }
@@ -95,6 +135,8 @@ them in your own MCP client (e.g. Claude Desktop / Claude Code):
 ## Notes
 
 - Requires **Node.js >= 18**.
+- The `video-transcription` MCP needs an **`OPENAI_API_KEY`** in a `.env` at the
+  project root (see [`.env.example`](.env.example)).
 - Instagram applies aggressive rate-limiting (HTTP 429) to anonymous requests;
   for consistent results, run from a residential IP and avoid many consecutive
   runs. Both MCPs tolerate failures and can be re-run to fill in the gaps.

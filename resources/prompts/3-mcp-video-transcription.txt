@@ -1,0 +1,60 @@
+Create an MCP in Node.js (JavaScript) that transcribes video files to text using
+the OpenAI API.
+
+Input
+- The MCP exposes a way to transcribe either a single video file or every video
+  in a folder (batch). Accept paths flexibly, without assuming a fixed folder
+  structure — the caller may pass any absolute or relative path.
+- For batch mode, the caller passes a folder path; the MCP discovers the video
+  files inside it (common extensions such as .mp4, .mov, .mkv, .webm, .avi).
+- Expose a `force` option (default off). When off, skip any video that was
+  already transcribed; when on, re-transcribe even if a transcription exists.
+
+Transcription
+- Do the transcription with the OpenAI audio transcription API.
+- The OpenAI API key must be read from a .env file at the root of the project.
+  If the key is not set, fail cleanly with a clear, explicit message — do not
+  crash with an obscure stack trace.
+
+Audio extraction (videos may be heavy — only the audio is needed)
+- Before sending anything to the API, extract the audio from the video and
+  compress it to the smallest size that still preserves speech clarity (e.g.
+  mono, a low sample rate around 16 kHz, a speech-friendly codec/bitrate). Never
+  upload the original video.
+- This must be portable and work on any operating system with NO extra software
+  installed on my machine. Bundle the audio tooling through npm (e.g. a
+  self-contained ffmpeg binary such as ffmpeg-static) rather than relying on a
+  system-wide ffmpeg install.
+
+Size limit (work around the OpenAI cap)
+- The OpenAI transcription endpoint rejects files above its size limit (~25 MB).
+- If a video's extracted audio is too large, split it into time-based chunks
+  that each stay safely under the limit, transcribe each chunk, and stitch the
+  pieces back together in order into one continuous transcription. The chunking
+  must be transparent to me — the result is a single transcription per video.
+
+Output (file naming and storage)
+- For each video, save its transcription as a .txt file side by side with the
+  video, in the same folder, with the same base name as the video
+  (e.g. 1_<shortcode>.mp4 -> 1_<shortcode>.txt).
+- The file must contain only the clean spoken text — no headers, no metadata, no
+  timestamps, just the transcription.
+
+Day-to-day behavior
+- Re-running on a folder must be cheap: skip videos that already have a
+  transcription (unless `force` is on).
+- Error tolerance: if anything goes wrong with one specific video, ignore that
+  video and move on to the next — one failure must never abort the whole batch.
+  Report which videos were transcribed, which were skipped, and which failed.
+
+Technical choices
+- Use the best technical paths that fit everything specified here.
+
+Project setup
+- Save the MCP in the path resources/mcps/video-transcription and register it in
+  the MCP configuration file at the root of the project (.mcp.json).
+- After building the MCP, install all Node.js dependencies (run npm install in
+  the MCP folder) so it is ready to use.
+
+Do not run or test the functionality — just develop the MCP; I will run the
+tests myself.

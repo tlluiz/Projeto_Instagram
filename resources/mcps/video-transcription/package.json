@@ -1,0 +1,25 @@
+{
+  "name": "video-transcription-mcp",
+  "version": "1.0.0",
+  "description": "MCP server that transcribes video files to text using the OpenAI API. Extracts and compresses the audio first (portable, bundled ffmpeg), saves a clean .txt next to each video, skips already-transcribed videos and works around the OpenAI size limit by chunking.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "video-transcription-mcp": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "cli": "node src/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^16.4.5",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "openai": "^4.67.0",
+    "zod": "^3.23.8"
+  }
+}
