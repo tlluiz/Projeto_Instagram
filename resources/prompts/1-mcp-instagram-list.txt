@@ -1,0 +1,20 @@
+Create an MCP that accesses Instagram's public API,
+without requiring authentication, to obtain all the videos
+of a given account. For each video in that list,
+bring the basic information together with the number of
+views and the number of likes.
+
+If the response comes paginated, walk through as many
+pages as possible. If any access error occurs during
+that process, ignore it and continue,
+storing only what it was possible to download.
+
+The list of videos must be saved to
+resources/videos/<account>/list.csv and organized
+by publication order, from the newest video to the
+oldest. The MCP may be run more than
+once and, when that happens, it should just update
+the list by prepending the most recent videos.
+
+Use Node.js (JavaScript) and save the MCP in the folder
+resources/mcps/<mcp name>.

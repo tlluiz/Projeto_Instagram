@@ -1,0 +1,20 @@
+{
+  "name": "instagram-videos-mcp",
+  "version": "1.0.0",
+  "description": "MCP server that collects the public videos of an Instagram account (basic info + views + likes) and saves them to CSV.",
+  "type": "module",
+  "bin": {
+    "instagram-videos-mcp": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "cli": "node src/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
+  }
+}
