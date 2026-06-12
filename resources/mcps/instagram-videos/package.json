@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "MCP server that collects the public videos of an Instagram account (basic info + views + likes) and saves them to CSV.",
   "type": "module",
+  "license": "MIT",
   "bin": {
     "instagram-videos-mcp": "src/index.js"
   },
