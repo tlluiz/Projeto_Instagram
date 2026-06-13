@@ -13,6 +13,8 @@ pipeline:
    the OpenAI API, saving a clean `.txt` next to each video.
 4. **Analysis skills** — read those transcriptions and break down *how* the
    creator communicates (hooks, retention, storytelling, vocabulary).
+5. **Synthesis skill** — merges those analyses into one reusable **communication
+   profile** of the creator, ready to rewrite any copy in their voice.
 
 See [`resources/docs/pipeline.excalidraw`](resources/docs/pipeline.excalidraw)
 for a diagram of the full pipeline (open it with the Excalidraw editor).
@@ -24,7 +26,7 @@ for a diagram of the full pipeline (open it with the Excalidraw editor).
 | `resources/mcps/instagram-videos/` | MCP that collects an account's videos into a CSV. See its [README](resources/mcps/instagram-videos/README.md). |
 | `resources/mcps/instagram-top-videos-download/` | MCP that downloads the top-liked videos from that CSV. See its [README](resources/mcps/instagram-top-videos-download/README.md). |
 | `resources/mcps/video-transcription/` | MCP that transcribes the downloaded videos to text via the OpenAI API. See its [README](resources/mcps/video-transcription/README.md). |
-| `.claude/skills/` | Claude Code skills that analyze the transcriptions (`ig-context` + four `ig-analyze-*` skills). |
+| `.claude/skills/` | Claude Code skills that analyze the transcriptions (`ig-context` + four `ig-analyze-*` skills) and synthesize them into a profile (`ig-communication-profile`). |
 | `resources/prompts/` | The task prompts that defined each MCP and the skills. |
 | `resources/docs/` | Excalidraw diagrams, including [`pipeline.excalidraw`](resources/docs/pipeline.excalidraw) — the full pipeline end to end. |
 | `resources/videos/<account>/list.csv` | Per-account video list produced by the first MCP (git-ignored). |
@@ -136,6 +138,24 @@ The four `ig-analyze-*` skills are **independent** (run one at a time or all
 together) and each reads `ig-context` as its lens before analyzing. They are
 invoked from a Claude Code session by name (e.g. "analyze the hooks in
 `resources/videos/<account>/downloads`").
+
+## 5. The synthesis skill
+
+Once the dimensions are analyzed, **`ig-communication-profile`** merges them into
+a single, reusable **communication profile** of the creator, saved as a Markdown
+file.
+
+| Skill | What it produces |
+|---|---|
+| **`ig-communication-profile`** | A prescriptive, self-contained **voice profile** — voice principles, hook, vocabulary/tone (with an "avoid" list), narrative structure, retention/rhythm, a bank of literal examples, and a step-by-step + checklist for applying the voice. Anchored throughout in verbatim quotes. |
+
+Unlike the analysis skills, this one is **not a report to read and forget**: you
+hand the file to the AI later — even pasted into a fresh conversation — together
+with any copy, and it rewrites that copy in the creator's voice. It accepts the
+**finished analyses** (straight to synthesis) or just the **raw transcriptions**
+(it runs the four `ig-analyze-*` skills first, then synthesizes), so it works end
+to end on its own. By default it saves to `communication-profile-<creator>.md` in
+the current directory.
 
 ## Registering the MCP servers
 

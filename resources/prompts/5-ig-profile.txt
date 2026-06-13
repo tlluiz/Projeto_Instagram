@@ -1,0 +1,25 @@
+I want to create a skill called "ig-communication-profile". It is the synthesis step of a set of skills that analyze an influencer's Instagram videos across separate 
+dimensions (opening hooks, vocabulary/tone, storytelling, and retention), plus a platform-context skill ("ig-context") that describes the grammar of Reels.
+
+This new skill takes those analyses and merges everything into a single "communication profile" of the creator, saved as a Markdown file. The profile is not a 
+report to read and forget: it is a reusable tool that I later hand over together with any copy so the AI can rewrite the text in that influencer's voice. 
+That's why it needs to be prescriptive (actionable rules, not observations) and self-sufficient (working even when pasted into a fresh conversation, 
+without access to the transcriptions or the other skills).
+
+The skill should trigger when the request involves creating/generating the communication profile, consolidating the analysis, a voice profile, the influencer's style 
+guide, merging the analyses into a profile, or when the goal is an artifact that allows writing copy in someone's style.
+
+The input comes in the prompt itself. It can arrive in two ways: the analyses already done (goes straight to the synthesis) or only the raw transcriptions 
+(first it produces the analyses and then synthesizes, so the skill works on its own end to end). When transcriptions come in, remember that consistency 
+across several videos is what defines the profile: a trait that appears once is an accident, what repeats is a signature.
+
+Before synthesizing, load the platform lens by reading the "ig-context" skill. When merging the dimensions, resolve overlaps (mention each trait only once, 
+in its strongest place), prioritize the signature that differentiates the voice, anchor everything in literal quotes, and clearly define what to 
+avoid (anti-patterns of register, words, and rhythm).
+
+The output is a Markdown file with a name coming from the prompt (or "communication-profile-<creator>.md" in the current directory, reporting where it was saved). 
+It follows a fixed template with these sections: voice summary, voice principles (short rules, each with its why), hook/opening, vocabulary and tone (including 
+catchphrases and an "avoid" list), narrative structure, retention and rhythm, a bank of literal examples, and finally "how to apply it to a copy" with a step-by-step 
+and a compliance checklist. All analysis sections must bring literal examples as calibration anchors.
+
+Generate the complete SKILL.md for this skill, with frontmatter (name and an actionable description that helps triggering) and the body in English.
