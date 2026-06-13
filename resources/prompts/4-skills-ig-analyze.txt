@@ -1,0 +1,32 @@
+I want you to create a set of Skills for analyzing transcriptions of Instagram videos (Reels). The idea is simple: I point you to a folder full of transcriptions from an influencer, you merge everything into a single text and run the analysis by criterion. Each criterion is a separate Skill, because I want to be able to use one at a time or all together, my way.
+
+The Skills are these:
+
+1. CONTEXT (the foundation)
+   A Skill that explains how Instagram/Reels really works: the grammar of going viral — hook in the first few seconds, retention, casual/lo-fi tone, comment triggers, loops, Brazilian internet culture. It does not analyze anything on its own; it is the LENS that all the others use. Every analysis Skill starts by reading the context so it judges things by the right Instagram yardstick, not by the yardstick of some formal text.
+
+2. HOOKS
+   Analyzes only the first few seconds of each video. Classifies the TYPE of hook, explains why it stops the scroll, and maps the opening patterns the creator repeats.
+
+3. RETENTION
+   Analyzes what keeps the person from start to finish: pattern interrupts, curiosity gaps, cliffhangers, mid-video re-hooks, pace changes, engagement triggers, and the closing loop/CTA.
+
+4. STORYTELLING
+   Analyzes the narrative construction: story arc, use of characters and concrete examples, open loops and payoffs, argument structure (lists, journeys), emotional beats, and the use of the specific vs. the abstract.
+
+5. VOCABULARY
+   Analyzes the way of speaking: slang, catchphrases, forms of address, sentence complexity, swear words, cultural references, and recurring expressions.
+
+How they relate to each other:
+- The CONTEXT is shared. The four analysis Skills (hooks, retention, storytelling, vocabulary) read the context as a foundation before analyzing.
+- Each one covers a different dimension of communication. Together, they give the complete portrait of how that creator communicates.
+- They need to be independent: I can run just "hooks" today and just "vocabulary" tomorrow, without depending on the others.
+
+How each analysis Skill should work (flexible):
+- I can pass the text directly in the prompt (one transcription or several pasted together), OR point to a folder with the transcription files.
+- When I point to the folder, the Skill merges all the transcriptions into a single text and analyzes the set, looking for the creator's recurring PATTERNS — it is not about analyzing an isolated video, it is about understanding their overall style.
+- The result has to be practical and specific, with real examples taken from the transcriptions, not generic advice.
+
+Create each Skill with a clear name (e.g. ig-context, ig-analyze-hooks, ig-analyze-retention, ig-analyze-storytelling, ig-analyze-vocabulary) and a description that triggers on the terms I would actually use ("hooks", "openings", "retention", "how he talks", "catchphrases", "storytelling", etc).
+
+Create the skills in the current folder.
