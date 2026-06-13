@@ -1,8 +1,9 @@
 # Projeto_Instagram
 
-A small project built around three **MCP servers** that work with the public
-videos of an Instagram account — **without authentication** (no login, cookies
-or tokens). Together they form a simple pipeline:
+A small project built around three **MCP servers** plus a set of **Claude Code
+skills** that work with the public videos of an Instagram account — **without
+authentication** (no login, cookies or tokens). Together they form a simple
+pipeline:
 
 1. **`instagram-videos`** — collects all public videos of an account (basic info
    + view and like counts) and saves them to a CSV.
@@ -10,6 +11,8 @@ or tokens). Together they form a simple pipeline:
    likes and downloads the most-liked ones as `.mp4` files.
 3. **`video-transcription`** — transcribes the downloaded videos to text with
    the OpenAI API, saving a clean `.txt` next to each video.
+4. **Analysis skills** — read those transcriptions and break down *how* the
+   creator communicates (hooks, retention, storytelling, vocabulary).
 
 ## What's here
 
@@ -18,7 +21,8 @@ or tokens). Together they form a simple pipeline:
 | `resources/mcps/instagram-videos/` | MCP that collects an account's videos into a CSV. See its [README](resources/mcps/instagram-videos/README.md). |
 | `resources/mcps/instagram-top-videos-download/` | MCP that downloads the top-liked videos from that CSV. See its [README](resources/mcps/instagram-top-videos-download/README.md). |
 | `resources/mcps/video-transcription/` | MCP that transcribes the downloaded videos to text via the OpenAI API. See its [README](resources/mcps/video-transcription/README.md). |
-| `resources/prompts/` | The task prompts that defined each MCP. |
+| `.claude/skills/` | Claude Code skills that analyze the transcriptions (`ig-context` + four `ig-analyze-*` skills). |
+| `resources/prompts/` | The task prompts that defined each MCP and the skills. |
 | `resources/docs/` | Excalidraw diagrams (overview / MCP flow). |
 | `resources/videos/<account>/list.csv` | Per-account video list produced by the first MCP (git-ignored). |
 | `resources/videos/<account>/downloads/` | Downloaded `.mp4` files (and their `.txt` transcriptions) produced by the second and third MCPs (git-ignored). |
@@ -107,6 +111,28 @@ node src/index.js <videoFileOrFolder> [--force]
 
 See its [README](resources/mcps/video-transcription/README.md) for parameters,
 environment variables and limitations.
+
+## 4. The analysis skills
+
+Once the videos are transcribed, a set of **Claude Code skills** (in
+[`.claude/skills/`](.claude/skills)) analyzes *how a creator communicates*. Point
+a skill at a folder of transcriptions (the `.txt` files from the
+`video-transcription` MCP) or paste them directly, and it merges everything into
+one corpus and surfaces the creator's **recurring patterns** — with verbatim
+examples, not generic advice.
+
+| Skill | What it analyzes |
+|---|---|
+| **`ig-context`** | The shared **lens**: how Reels virality actually works (hooks, retention, lo-fi tone, comment triggers, loops, BR internet culture). Each analysis skill reads it first; it does not analyze on its own. |
+| **`ig-analyze-hooks`** | The **openings** — hook types, why each stops the scroll, the opening templates the creator reuses. |
+| **`ig-analyze-retention`** | What **keeps you watching** — pattern interrupts, curiosity gaps, cliffhangers, mid-video re-hooks, pacing, closing loop/CTA. |
+| **`ig-analyze-storytelling`** | The **narrative** — story arcs, characters and concrete examples, open loops and payoffs, argument structure, emotional beats. |
+| **`ig-analyze-vocabulary`** | The **way of speaking** — slang, catchphrases, forms of address, sentence complexity, swear words, cultural references. |
+
+The four `ig-analyze-*` skills are **independent** (run one at a time or all
+together) and each reads `ig-context` as its lens before analyzing. They are
+invoked from a Claude Code session by name (e.g. "analyze the hooks in
+`resources/videos/<account>/downloads`").
 
 ## Registering the MCP servers
 
