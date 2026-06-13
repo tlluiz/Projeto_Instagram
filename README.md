@@ -14,6 +14,9 @@ pipeline:
 4. **Analysis skills** — read those transcriptions and break down *how* the
    creator communicates (hooks, retention, storytelling, vocabulary).
 
+See [`resources/docs/pipeline.excalidraw`](resources/docs/pipeline.excalidraw)
+for a diagram of the full pipeline (open it with the Excalidraw editor).
+
 ## What's here
 
 | Path | Description |
@@ -23,7 +26,7 @@ pipeline:
 | `resources/mcps/video-transcription/` | MCP that transcribes the downloaded videos to text via the OpenAI API. See its [README](resources/mcps/video-transcription/README.md). |
 | `.claude/skills/` | Claude Code skills that analyze the transcriptions (`ig-context` + four `ig-analyze-*` skills). |
 | `resources/prompts/` | The task prompts that defined each MCP and the skills. |
-| `resources/docs/` | Excalidraw diagrams (overview / MCP flow). |
+| `resources/docs/` | Excalidraw diagrams, including [`pipeline.excalidraw`](resources/docs/pipeline.excalidraw) — the full pipeline end to end. |
 | `resources/videos/<account>/list.csv` | Per-account video list produced by the first MCP (git-ignored). |
 | `resources/videos/<account>/downloads/` | Downloaded `.mp4` files (and their `.txt` transcriptions) produced by the second and third MCPs (git-ignored). |
 
